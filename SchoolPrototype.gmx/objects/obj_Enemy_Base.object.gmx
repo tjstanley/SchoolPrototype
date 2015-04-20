@@ -131,7 +131,12 @@ if( State == "Hit_Start" )
 {
     State = "Hit";
     StateTimer = 15;
-    DetectionRadius = 256;
+    /// Create the emitter
+    var emit;
+    emit = instance_create(x, y, obj_Emitter);
+    emit.sid = sound_hit;
+    emit.fref = 10;
+    emit.fmax = 20;  
     // Change animation
 }
 if( State == "Hit" )
@@ -144,7 +149,7 @@ if( State == "Hit" )
         speed = 0;
     if( StateTimer == 0 )
     {
-        State = "Idle_Start";
+        State = "Chase_Start";
         visible = true;
     }
     if( HitPoints &lt;= 0 )
@@ -152,6 +157,35 @@ if( State == "Hit" )
         State = "Death_Start";
         visible = true;
     }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Depth
+if( instance_exists( obj_Dwarf ) )
+{
+    var inst = instance_nearest( x, y, obj_Dwarf );
+    if( y &gt; inst.y )
+        depth = inst.depth - 1;
+    else
+        depth = inst.depth + 1;
 }
 </string>
           </argument>
@@ -180,11 +214,11 @@ if( State == "Hit" )
 // Placeholder
 
 // Make sure the player isn't already dead.
-if (other.State != "Death" &amp;&amp; other.State != "Hit" )
+if (other.State != "Death" &amp;&amp; other.State != "Hit" &amp;&amp; other.IsInvincible == false)
 {
     other.State = "Hit_Start";
     other.HitPoints -= Damage;
-    other.direction = -other.direction;
+    other.direction = -direction;
     other.speed = 10;
 }
 </string>
@@ -214,8 +248,6 @@ if( State != "Hit" &amp;&amp; State != "Death" &amp;&amp; other.Owner != id )
 {
     State = "Hit_Start";
     HitPoints -= other.Damage;
-    direction = other.direction;
-    speed = 10;
 }
 /*
 // Placeholder
@@ -293,7 +325,7 @@ if (PlayerDetected)
           <argument>
             <kind>1</kind>
             <string>/// Draw Hit Points
-draw_rectangle_colour( x - 16, y, x - 16 + 32 * HitPoints / 100, y + 8, c_maroon, c_red, c_black, c_red, false );
+draw_rectangle_colour( x - 16, y + 16, x - 16 + 32 * HitPoints / 100, y + 20, c_maroon, c_red, c_black, c_red, false );
 </string>
           </argument>
         </arguments>

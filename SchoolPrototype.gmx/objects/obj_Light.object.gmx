@@ -26,9 +26,9 @@
           <argument>
             <kind>1</kind>
             <string>/// Surface
-Surface = surface_create( view_wview[ 0 ], view_hview[ 0 ] );
+Surface = surface_create( view_wview[ 0 ] + 64, view_hview[ 0 ] + 64 );
 surface_set_target( Surface );
-draw_rectangle( 0, 0, view_wview[ 0 ], view_hview[ 0 ], false );
+draw_rectangle( 0, 0, view_wview[ 0 ] + 32, view_hview[ 0 ] + 32, false );
 surface_reset_target();
 </string>
           </argument>
@@ -176,7 +176,7 @@ if( ++Flicker &gt; 360 )
         </arguments>
       </action>
     </event>
-    <event eventtype="8" enumb="0">
+    <event eventtype="8" enumb="73">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -272,6 +272,45 @@ with( obj_Torch )
     }
 }
 with( obj_FlameMinion )
+{
+    /*if( On )*/
+    {
+        for( var c = 1; c &lt; 15; ++c )
+        {
+            draw_set_alpha( 1 / c );
+            draw_circle( x - view_xview[ 0 ], y - view_yview[ 0 ], 8 * c + power( -1, c ) * 2 * dsin( 5 * c / 3 * other.Flicker ), false );
+        }
+        draw_set_alpha( 0.05 );
+        draw_circle( x - view_xview[ 0 ], y - view_yview[ 0 ] - 8, 128 + 8 * dsin( 10 * other.Flicker ), false );
+    }
+}
+with( obj_Fireball )
+{
+    /*if( On )*/
+    {
+        for( var c = 1; c &lt; 15; ++c )
+        {
+            draw_set_alpha( 1 / c );
+            draw_circle( x - view_xview[ 0 ], y - view_yview[ 0 ], 8 * c + power( -1, c ) * 2 * dsin( 5 * c / 3 * other.Flicker ), false );
+        }
+        draw_set_alpha( 0.05 );
+        draw_circle( x - view_xview[ 0 ], y - view_yview[ 0 ] - 8, 128 + 8 * dsin( 10 * other.Flicker ), false );
+    }
+}
+with( obj_FlameJet )
+{
+    /*if( On )*/
+    {
+        for( var c = 1; c &lt; 15; ++c )
+        {
+            draw_set_alpha( 1 / c );
+            draw_circle( x - view_xview[ 0 ], y - view_yview[ 0 ], 8 * c + power( -1, c ) * 2 * dsin( 5 * c / 3 * other.Flicker ), false );
+        }
+        draw_set_alpha( 0.05 );
+        draw_circle( x - view_xview[ 0 ], y - view_yview[ 0 ] - 8, 128 + 8 * dsin( 10 * other.Flicker ), false );
+    }
+}
+with( obj_FireballDragon )
 {
     /*if( On )*/
     {

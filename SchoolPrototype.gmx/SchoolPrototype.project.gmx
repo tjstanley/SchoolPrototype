@@ -4,10 +4,39 @@
     <Config>Configs\Default</Config>
   </Configs>
   <NewExtensions/>
-  <sounds name="sound"/>
+  <sounds name="sound">
+    <sound>sound\music_background1</sound>
+    <sound>sound\sound_applause</sound>
+    <sound>sound\sound_arrow</sound>
+    <sound>sound\sound_arrow2</sound>
+    <sound>sound\sound_boost</sound>
+    <sound>sound\sound_chest</sound>
+    <sound>sound\sound_coin</sound>
+    <sound>sound\sound_door</sound>
+    <sound>sound\sound_falling</sound>
+    <sound>sound\sound_footstep</sound>
+    <sound>sound\sound_inventory</sound>
+    <sound>sound\sound_item</sound>
+    <sound>sound\sound_key</sound>
+    <sound>sound\sound_switch</sound>
+    <sound>sound\sound_fireball</sound>
+    <sound>sound\sound_grunt_loud</sound>
+    <sound>sound\sound_hit</sound>
+    <sound>sound\sound_minion_die</sound>
+    <sound>sound\sound_scream</sound>
+    <sound>sound\sound_sword</sound>
+    <sound>sound\music_background_v0</sound>
+    <sound>sound\music_background_v1</sound>
+    <sound>sound\music_background_v2_drums</sound>
+    <sound>sound\music_background_v2_nodrums</sound>
+    <sound>sound\music_background_v2_otherdrums</sound>
+    <sound>sound\music_background_v3_fast</sound>
+    <sound>sound\sound_skeleton</sound>
+    <sound>sound\sound_switch_door</sound>
+    <sound>sound\sound_dragon</sound>
+  </sounds>
   <sprites name="sprites">
     <sprite>sprites\spr_wall</sprite>
-    <sprite>sprites\spr_wall_accent</sprite>
     <sprite>sprites\spr_player</sprite>
     <sprite>sprites\spr_player_death</sprite>
     <sprite>sprites\spr_ball</sprite>
@@ -29,6 +58,13 @@
       <sprite>sprites\spr_arrow</sprite>
       <sprite>sprites\spr_spike</sprite>
       <sprite>sprites\spr_Bow</sprite>
+      <sprite>sprites\spr_Ninja</sprite>
+      <sprite>sprites\spr_Platemail</sprite>
+      <sprite>sprites\spr_Wand</sprite>
+      <sprite>sprites\spr_Shield</sprite>
+      <sprite>sprites\spr_ObeliskTarget</sprite>
+      <sprite>sprites\spr_Poison</sprite>
+      <sprite>sprites\spr_SpikeBall</sprite>
     </sprites>
     <sprites name="Dwarf">
       <sprites name="Idle">
@@ -47,6 +83,9 @@
       <sprite>sprites\spr_Exclamation</sprite>
       <sprite>sprites\spr_drop</sprite>
       <sprite>sprites\spr_Bag</sprite>
+      <sprite>sprites\spr_MineCart</sprite>
+      <sprite>sprites\spr_Statue</sprite>
+      <sprite>sprites\spr_Fireball</sprite>
     </sprites>
     <sprites name="MainMenu">
       <sprite>sprites\spr_PlayGame</sprite>
@@ -65,24 +104,43 @@
       <sprite>sprites\spr_Skelly_Idle</sprite>
       <sprite>sprites\spr_Skelly_Attack</sprite>
       <sprite>sprites\spr_Skelly_Walk</sprite>
+      <sprite>sprites\spr_Dragon</sprite>
     </sprites>
     <sprites name="Powerups">
       <sprite>sprites\spr_SpeedBoost</sprite>
+      <sprite>sprites\spr_Heatlh</sprite>
+      <sprite>sprites\spr_Quiver</sprite>
+      <sprite>sprites\spr_ManaPot</sprite>
     </sprites>
     <sprites name="Lobby">
       <sprite>sprites\spr_PlayerSlot</sprite>
+    </sprites>
+    <sprites name="Shop">
+      <sprite>sprites\spr_Shop_Arrow</sprite>
+      <sprite>sprites\spr_Shop_Buy</sprite>
+      <sprite>sprites\spr_Shop_Exit</sprite>
+      <sprite>sprites\spr_Shop_Upgrade</sprite>
+      <sprite>sprites\spr_Shop_Random</sprite>
     </sprites>
   </sprites>
   <backgrounds name="background">
     <background>background\bg_floor</background>
     <background>background\bg_Wall_Tile</background>
+    <background>background\bg_Splash</background>
+    <background>background\bg_Rock1</background>
+    <background>background\bg_Rock2</background>
+    <background>background\bg_MiningRock</background>
+    <background>background\bg_Plant1</background>
+    <background>background\bg_Plant2</background>
+    <background>background\bg_DiningTable</background>
+    <background>background\bg_Chemistry</background>
+    <background>background\bg_DeadPrisoner</background>
   </backgrounds>
   <paths name="paths">
     <path>paths\path_Guard_LightsOn</path>
     <path>paths\path_Avoidance_small</path>
   </paths>
   <scripts name="scripts">
-    <script>scripts\scr_SReceivedPacket.gml</script>
     <script>scripts\scr_CanDetectPlayer.gml</script>
     <script>scripts\scr_CReceivedPacket.gml</script>
     <script>scripts\scr_Flee.gml</script>
@@ -91,11 +149,18 @@
     <script>scripts\scr_MeleeAttack.gml</script>
     <script>scripts\scr_Wander.gml</script>
     <script>scripts\scr_Angle24Dir.gml</script>
+    <script>scripts\scr_isUsable.gml</script>
+    <scripts name="Server">
+      <script>scripts\scr_SReceivedPacket.gml</script>
+      <script>scripts\scr_RandomMap.gml</script>
+    </scripts>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_DEMO</font>
     <font>fonts\fnt_Default</font>
     <font>fonts\fnt_LargeTimer</font>
+    <font>fonts\fnt_Default_Small</font>
+    <font>fonts\fnt_Shop</font>
   </fonts>
   <objects name="objects">
     <objects name="Weapons">
@@ -117,10 +182,42 @@
         <object>objects\obj_Spike_3</object>
       </objects>
       <object>objects\obj_Fireball</object>
+      <object>objects\obj_FireballDragon</object>
+      <objects name="Ninja Armor">
+        <object>objects\obj_Ninja</object>
+        <object>objects\obj_Ninja_2</object>
+        <object>objects\obj_Ninja_3</object>
+      </objects>
+      <objects name="Platemail">
+        <object>objects\obj_Platemail</object>
+        <object>objects\obj_Platemail_2</object>
+        <object>objects\obj_Platemail_3</object>
+      </objects>
+      <objects name="Wand">
+        <object>objects\obj_PoisonWand</object>
+        <object>objects\obj_PoisonWand_3</object>
+        <object>objects\obj_FireWand</object>
+        <object>objects\obj_FireWand_3</object>
+      </objects>
+      <objects name="Shield">
+        <object>objects\obj_Shield</object>
+        <object>objects\obj_Shield_2</object>
+        <object>objects\obj_Shield_3</object>
+      </objects>
+      <objects name="Agile Armor">
+        <object>objects\obj_Agile</object>
+        <object>objects\obj_Agile_2</object>
+        <object>objects\obj_Agile_3</object>
+      </objects>
     </objects>
     <objects name="Powerups">
       <object>objects\obj_Quiver</object>
+      <object>objects\obj_ManaPotion</object>
+      <object>objects\obj_Bombs</object>
       <object>objects\obj_SpeedBoost</object>
+      <object>objects\obj_Health</object>
+      <object>objects\obj_PowerupSpawn</object>
+      <object>objects\obj_Treasure</object>
     </objects>
     <objects name="Enemies">
       <object>objects\obj_FlameMinion</object>
@@ -128,6 +225,7 @@
       <object>objects\obj_Skelly</object>
       <object>objects\obj_Obelisk</object>
       <object>objects\obj_ObeliskTarget</object>
+      <object>objects\obj_Dragon</object>
     </objects>
     <objects name="Engine">
       <object>objects\obj_Light</object>
@@ -139,6 +237,9 @@
       <object>objects\obj_Atmosphere</object>
       <object>objects\obj_Inventory</object>
       <object>objects\obj_Spectate</object>
+      <object>objects\obj_ArmorButton</object>
+      <object>objects\obj_Listener</object>
+      <object>objects\obj_Emitter</object>
     </objects>
     <object>objects\obj_DEMO</object>
     <objects name="Generic">
@@ -151,6 +252,7 @@
       <object>objects\obj_Door</object>
       <object>objects\obj_Exit</object>
       <object>objects\obj_Key</object>
+      <object>objects\obj_MineCart</object>
       <objects name="Traps">
         <object>objects\obj_Saw</object>
         <object>objects\obj_Launcher</object>
@@ -169,9 +271,11 @@
       </objects>
       <object>objects\obj_Blood</object>
       <object>objects\obj_fakeExit</object>
-      <object>objects\obj_Treasure</object>
       <object>objects\obj_Loot</object>
       <object>objects\obj_Drop</object>
+      <object>objects\obj_Shop</object>
+      <object>objects\obj_TombStone</object>
+      <object>objects\obj_Statue</object>
     </objects>
     <objects name="Bridge">
       <object>objects\obj_Bridge</object>
@@ -207,12 +311,24 @@
     <objects name="Big">
       <object>objects\obj_DoorShut</object>
     </objects>
+    <objects name="Shop">
+      <object>objects\obj_Labels</object>
+      <object>objects\obj_RandomButton</object>
+      <object>objects\obj_UpgradeButton</object>
+    </objects>
+    <objects name="Dragon">
+      <object>objects\obj_DragonSwitch</object>
+      <object>objects\obj_DragonController</object>
+      <object>objects\obj_FlameJet</object>
+      <object>objects\obj_FlameJetController</object>
+    </objects>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_MainMenu</room>
-    <room>rooms\rm_Test</room>
     <room>rooms\rm_Server</room>
     <room>rooms\rm_Bridge</room>
+    <room>rooms\rm_Shop</room>
+    <room>rooms\rm_Test</room>
     <room>rooms\rm_Sneak</room>
     <room>rooms\rm_ServerList</room>
     <room>rooms\rm_MontyHall</room>
@@ -222,8 +338,15 @@
     <room>rooms\rm_Ice</room>
     <room>rooms\rm_Main</room>
     <room>rooms\rm_Client</room>
-    <room>rooms\rm_Big</room>
     <room>rooms\rm_Lobby</room>
+    <rooms name="Big">
+      <room>rooms\rm_Big1</room>
+      <room>rooms\rm_Big2</room>
+      <room>rooms\rm_Big3</room>
+      <room>rooms\rm_Big4</room>
+      <room>rooms\rm_Big5</room>
+    </rooms>
+    <room>rooms\rm_Dragon</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>

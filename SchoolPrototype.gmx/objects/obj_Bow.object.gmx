@@ -2,7 +2,7 @@
 <object>
   <spriteName>spr_Bow</spriteName>
   <solid>0</solid>
-  <visible>-1</visible>
+  <visible>0</visible>
   <depth>0</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
@@ -31,6 +31,29 @@ alarm[ 0 ] = 1;
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Scale
+image_xscale = 0.25;
+image_yscale = 0.25;
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="2" enumb="0">
       <action>
@@ -50,10 +73,13 @@ alarm[ 0 ] = 1;
           <argument>
             <kind>1</kind>
             <string>/// Fire Arrow
-var arrow = instance_create( x, y, obj_Arrow );
-arrow.direction = direction;
-arrow.image_angle = direction;
-arrow.Owner = Owner;
+if( instance_exists( Owner ) )
+{
+    var arrow = instance_create( x, y, obj_Arrow );
+    arrow.direction = direction;
+    arrow.image_angle = direction;
+    arrow.Owner = Owner;
+}
 instance_destroy();
 </string>
           </argument>
@@ -78,8 +104,13 @@ instance_destroy();
           <argument>
             <kind>1</kind>
             <string>/// Stay with Owner
-x = Owner.x;
-y = Owner.y - 16;
+if( instance_exists( Owner ) )
+{
+    x = Owner.x;
+    y = Owner.y;
+}
+else
+    instance_destroy();
 </string>
           </argument>
         </arguments>

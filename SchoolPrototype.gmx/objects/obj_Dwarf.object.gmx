@@ -6,7 +6,7 @@
   <depth>0</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
-  <maskName>&lt;undefined&gt;</maskName>
+  <maskName>spr_ball</maskName>
   <events>
     <event eventtype="0" enumb="0">
       <action>
@@ -231,6 +231,28 @@ SpeedScale = 1;
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// IsInvincible
+IsInvincible = false;
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="2" enumb="0">
       <action>
@@ -438,6 +460,23 @@ if( State != "Death" )
                                 --obj_Inventory.Ammo[? "Bombs" ];
                                 validShot = true;
                             }
+                            break;
+                        case obj_PoisonWand:
+                        case obj_PoisonWand_3:
+                            if( obj_Inventory.Ammo[? "Mana" ] &gt;= 20 )
+                            {
+                                obj_Inventory.Ammo[? "Mana" ] -= 20;
+                                validShot = true;
+                            }
+                            break;
+                        case obj_FireWand:
+                        case obj_FireWand_3:
+                            if( obj_Inventory.Ammo[? "Mana" ] &gt;= 10 )
+                            {
+                                obj_Inventory.Ammo[? "Mana" ] -= 10;
+                                validShot = true;
+                            }
+                            break;
                     }
                 }
                 if( validShot )
@@ -491,12 +530,7 @@ if( State == "Idle_Start" )
     x = floor( x );
     y = floor( y );
     sprite_index = spr_dwarf_idle_s;
-    if( direction &lt; 180 )
-        image_angle = 180;
-        //sprite_index = spr_dwarf_idle_n;
-    else
-        image_angle = 0;
-        //sprite_index = spr_dwarf_idle_s;*/
+    image_angle = 0;
 }
 if( State == "Idle" )
 {
@@ -533,7 +567,7 @@ if( State == "Move_Start" )
 if( State == "Move" )
 {
     // Direction animation
-    image_angle = scr_Angle24Dir( direction );
+    image_angle = direction + 90;//scr_Angle24Dir( direction );
     // End of animation direction
     // Are we on ice?
     if( place_meeting( x, y, obj_Ice ) )
@@ -621,11 +655,23 @@ if( State == "Hit_Start" )
     State = "Hit";
     StateTimer = 15;
     // Change animation
+
+    /// Create the emitter
+    var emit;
+    emit = instance_create(x, y, obj_Emitter);
+    emit.sid = sound_grunt_loud;
+    emit.fref = 10;
+    emit.fmax = 20;
 }
 if( State == "Hit" )
 {
+    var _newCol;
+    if( image_blend == c_white )
+        _newCol = c_red;
+    else
+        _newCol = c_white;
     if( StateTimer mod 5 == 0 )
-        visible = !visible;
+        image_blend = _newCol;
     if( StateTimer mod 2.5 == 0 &amp;&amp; StateTimer != 15 )
         speed *= 0.1;
     if( speed &lt; 1 )
@@ -633,12 +679,12 @@ if( State == "Hit" )
     if( StateTimer == 0 )
     {
         State = "Idle_Start";
-        visible = true;
+        image_blend = c_white;
     }
     if( HitPoints &lt;= 0 )
     {
         State = "Death_Start";
-        visible = true;
+        image_blend = c_white;
     }
 }
 </string>
@@ -664,8 +710,26 @@ if( State == "Hit" )
             <string>/// Death
 if( State == "Death_Start" )
 {
-    sprite_index = spr_player_death;
+    /// Create the emitter
+    var emit;
+    emit = instance_create(x, y, obj_Emitter);
+    emit.sid = sound_scream;
+    emit.fref = 10;
+    emit.fmax = 20;
+    
+    visible = false;
+    var _Tombstone = instance_create( x, y, obj_TombStone );
+    if( instance_exists( obj_Client ) )
+    {
+        for( var s = 0; s &lt; ds_list_size( obj_Client.SocketList ); ++s )
+        {
+            var _lMap = obj_Client.SocketList[|s];
+            if( _lMap[?"Instance"] == id )
+                _Tombstone.Name = _lMap[?"Name"];
+        }
+    }
     image_index = 0;
+    image_speed = 1;
     speed = 0;
     State = "Death";
     StateTimer = 30 * 2;
@@ -676,20 +740,68 @@ if( State == "Death" )
         image_speed = 0;
     if( StateTimer == 0 )
     {
-        if( room = rm_Client || room == rm_Server )
+        if( room == rm_Client &amp;&amp; global.MyInst == id )
+            room_goto( rm_MainMenu );
+        else if( room == rm_Server )
+        {
+            for( var p = 0; p &lt; ds_list_size( obj_Server.PlayerList ); ++p )
+            {
+                var _lMap = obj_Server.PlayerList[|p];
+                if( _lMap[?"Instance"] == id )
+                {
+                    var _deadsocket = _lMap[?"Socket"];
+                    with( obj_Server )
+                    {
+                        network_destroy( _lMap[?"Socket"] );
+                        // Really messy code below
+                        var socket = _deadsocket;
+                        for( var s = 0; s &lt; ds_list_size( SocketList ); ++s )
+                        {
+                            if( SocketList[| s ] == socket )
+                                ds_list_delete( SocketList, s );
+                        }
+                        for( var s = 0; s &lt; ds_list_size( PlayerList ); ++s )
+                        {
+                            var _lMap = PlayerList[| s ];
+                            if( _lMap[? "Socket" ] == socket )
+                            {
+                                var _inst = _lMap[? "Instance" ];
+                                if( instance_exists( _inst ) )
+                                    with( _inst )
+                                        instance_destroy();
+                                ds_map_destroy( _lMap[? "PositionMap" ] );
+                                ds_map_destroy( _lMap[? "GestureMap" ] );
+                                ds_map_destroy( _lMap );
+                                ds_list_delete( PlayerList, s );
+                                // Notify clients of the disconnect
+                                buffer_seek( Buffer, buffer_seek_start, 0 );
+                                buffer_write( Buffer, buffer_u8, 4 );
+                                buffer_write( Buffer, buffer_u8, socket );
+                                for( var s = 0; s &lt; ds_list_size( SocketList ); ++s )
+                                {
+                                    network_send_packet( SocketList[| s ], Buffer, buffer_tell( Buffer ) );
+                                }
+                            }
+                        }
+                        // Update player count on Lobby Server
+                        buffer_seek( Buffer, buffer_seek_start, 0 );
+                        buffer_write( Buffer, buffer_u8, 2 );
+                        buffer_write( Buffer, buffer_u8, ds_list_size( PlayerList ) );
+                        network_send_packet( LobbyServer, Buffer, buffer_tell( Buffer ) );
+                        // End of really messy code
+                    }
+                }
+            }
             instance_destroy();
+        }
         else
         {
-            if( global.RestartOnDeath &amp;&amp; !global.Waiting )
+            if( !global.Waiting )
             {
                 room_goto( room );
             }
             else
-            {
-                State = "Idle_Start";
-                x = global.StartX;
-                y = global.StartY;
-            }
+                instance_destroy();
         }
     }
 }
@@ -719,6 +831,12 @@ if( State == "Fall_Start" )
     speed = 0;
     State = "Fall";
     StateTimer = 30 * 2;
+    /// Create the emitter
+    var emit;
+    emit = instance_create(x, y, obj_Emitter);
+    emit.sid = sound_falling;
+    emit.fref = 10;
+    emit.fmax = 20;
 }
 if( State == "Fall" )
 {
@@ -729,11 +847,7 @@ if( State == "Fall" )
     }
     else if( StateTimer == 0 )
     {
-        State = "Idle_Start";
-        x = global.StartX;
-        y = global.StartY;
-        image_xscale = 0.25;
-        image_yscale = 0.25;
+        State = "Death";
     }
 }
 </string>
@@ -758,10 +872,66 @@ if( State == "Fall" )
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>/// Create the emitter
+var emit;
+emit = instance_create(x, y, obj_Emitter);
+emit.sid = sound_key;
+emit.fref = 10;
+emit.fmax = 20;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>/// Pick up key
 hasKey = true;
 with( other )
     instance_destroy();
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="4">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Remove if Spectating
+if( instance_exists( obj_Client ) &amp;&amp; obj_Client.State == "Spectator" )
+{
+    instance_destroy();
+    global.MyInst = noone;
+}
+else
+    global.MyInst = id;
 </string>
           </argument>
         </arguments>
@@ -807,7 +977,8 @@ draw_self();
           <argument>
             <kind>1</kind>
             <string>/// Draw Hit Points
-draw_rectangle_colour( x - 16, y, x - 16 + 32 * HitPoints / 100, y + 8, c_maroon, c_red, c_black, c_red, false );
+if( image_alpha == 1 )
+    draw_rectangle_colour( x - 16, y + 16, x - 16 + 32 * HitPoints / 100, y + 20, c_maroon, c_red, c_black, c_red, false );
 </string>
           </argument>
         </arguments>

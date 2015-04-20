@@ -114,7 +114,7 @@ switch( msgid ) {
             var _name = buffer_read( buffer, buffer_string );
             var _found = false;
             if( _name == Name )
-                State = "Game";
+                State = "Game";     // No longer spectator
             for( var s = 0; s < ds_list_size( SocketList ); ++s )
             {
                 var _lMap = SocketList[| s ];
@@ -144,6 +144,12 @@ switch( msgid ) {
                 _lMap[? "PositionMap" ] = _pMap;
                 _lMap[? "GestureMap" ] = _gMap;
                 ds_list_add( SocketList, _lMap );
+                // Reset Ready Status
+                for( var s = 0; s < ds_list_size( SocketList ); ++s )
+                {
+                    var _lMap = SocketList[| s ];
+                    _lMap[? "Ready" ] = false;
+                }
             }
         }
         break;
@@ -221,10 +227,21 @@ switch( msgid ) {
             //ds_list_add( MapList, _map );
         }
         //ds_list_add( MapList, rm_Client );
+        if( instance_exists( obj_Time ) )
+        {
+            if( _map == rm_Shop )
+                obj_Time.StartTime = date_inc_minute( date_current_datetime(), 1 );
+            else
+                obj_Time.StartTime = date_inc_minute( date_current_datetime(), 3 );
+        }
         if( State != "Spectator" )
             global.Waiting = false;
         else
             global.Waiting = true;
-        room_goto( _map );
+        if( _map == rm_MainMenu )
+            with( obj_Inventory )
+                instance_destroy();
+        if( room != _map )
+            room_goto( _map );
         break;
 }
